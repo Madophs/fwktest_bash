@@ -48,10 +48,42 @@ function fwktest_evaluate() {
         # Execute test functions
         pushd "${__test_dir}" &> /dev/null
         source "./${__filename}"
+        local -i __filetest_failed_assertions_before_call=${__counter_failed_assertions}
+        local -i __filetest_total_assertions_before_call=${__counter_total_assertions}
         for __function in "${__test_func[@]}"
         do
+            local -i __function_failed_assertions_before_call=${__counter_failed_assertions}
+            local -i __function_total_assertions_before_call=${__counter_total_assertions}
+
+            # Calling the function
             ${__function}
+
+            local -i __function_total_assertions=$(( __counter_total_assertions - __function_total_assertions_before_call ))
+            local -i __function_total_fails=$(( __counter_failed_assertions - __function_failed_assertions_before_call ))
+            local -i __function_total_pass=$(( __function_total_assertions - __function_total_fails ))
+
+            if (( __function_total_fails != 0 ))
+            then
+                fwktest_print failed "${__function}" "${__function_total_pass}/${__function_total_assertions}"
+            else
+                fwktest_print pass "${__function}" "${__function_total_pass}/${__function_total_assertions}"
+            fi
         done
+
+        local -i __filetest_total_assertions=$(( __counter_total_assertions - __filetest_total_assertions_before_call ))
+        local -i __filetest_total_fails=$(( __counter_failed_assertions - __filetest_failed_assertions_before_call ))
+        local -i __filetest_total_pass=$(( __filetest_total_assertions - __filetest_total_fails ))
+
+        fwktest_print status "${__filename}" "${__filetest_total_pass}/${__filetest_total_assertions}"
         popd &> /dev/null
     done
+
+    if (( __counter_failed_assertions == 0 ))
+    then
+        fwktest_print tests_passed
+    else
+        fwktest_print tests_passed
+        local -i __counter_passed_assertions=$(( __counter_total_assertions - __counter_failed_assertions ))
+        fwktest_print tests_failed ${__counter_passed_assertions} ${__counter_failed_assertions} ${__counter_total_assertions}
+    fi
 }

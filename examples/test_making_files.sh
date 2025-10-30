@@ -10,4 +10,5 @@ function test_create_simple_file() {
 
 function test_strings_are_equal() {
     fwktest_assert_string_equals "hola" "hi"
+    fwktest_assert_string_equals "como estas" "como estas"
 }
