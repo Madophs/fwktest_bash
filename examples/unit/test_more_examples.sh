@@ -21,3 +21,9 @@ function test_simple_sum_ok() {
     __sum_number 77 88 __res
     fwktest_assert_digit_equals ${__res} 165
 }
+
+function test_try_execute_non_existing_file() {
+    local __executable="/tmp/nonexiting_executable.sh"
+    (bash "${__executable}" &> /dev/null)
+    fwktest_assert_exit_code_equals $? 127
+}
