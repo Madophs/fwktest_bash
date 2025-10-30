@@ -82,7 +82,6 @@ function fwktest_evaluate() {
     then
         fwktest_print tests_passed
     else
-        fwktest_print tests_passed
         local -i __counter_passed_assertions=$(( __counter_total_assertions - __counter_failed_assertions ))
         fwktest_print tests_failed ${__counter_passed_assertions} ${__counter_failed_assertions} ${__counter_total_assertions}
     fi
