@@ -20,4 +20,5 @@ function test_files_contents_are_same_fails() {
     cp "${__file1}" "${__file2}"
     sed -i '2,2d' "${__file2}" # Delete second line
     fwktest_assert_file_content_same_as "${__file1}" "${__file2}"
+    fwktest_assert_not_file_content_same_as "${__file1}" "${__file2}"
 }

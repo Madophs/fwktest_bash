@@ -29,15 +29,29 @@ function fwktest_assert_file() {
     fwktest_eval -f "${__file_location}" || fwktest_print fail "Failed to assert that file '${__YELLOW}${__file_location}${__BLK}' exists."
 }
 
+function fwktest_assert_not_file() {
+    local __file_location=${1}
+    fwktest_eval ! -f "${__file_location}" || fwktest_print fail "Failed to assert that file '${__YELLOW}${__file_location}${__BLK}' not exists."
+}
+
 function fwktest_assert_dir() {
     local __dir_location=${1}
     fwktest_eval -d "${__dir_location}" || fwktest_print fail "Failed to assert that directory '${__YELLOW}${__dir_location}${__BLK}' exists."
 }
 
+function fwktest_assert_not_dir() {
+    local __dir_location=${1}
+    fwktest_eval ! -d "${__dir_location}" || fwktest_print fail "Failed to assert that directory '${__YELLOW}${__dir_location}${__BLK}' not exists."
+}
+
 function fwktest_assert_executable() {
     local __file_location=${1}
-    fwktest_eval -f "${__file_location}" || fwktest_print fail "Failed to assert that executable '${__YELLOW}${__file_location}${__BLK}' exists."
-    fwktest_eval -x "${__file_location}" || fwktest_print fail "Failed to assert that file '${__YELLOW}${__file_location}${__BLK}' is executable."
+    fwktest_eval -x "${__file_location}" || fwktest_print fail "Failed to assert that file '${__YELLOW}${__file_location}${__BLK}' is an executable."
+}
+
+function fwktest_assert_not_executable() {
+    local __file_location=${1}
+    fwktest_eval ! -x "${__file_location}" || fwktest_print fail "Failed to assert that file '${__YELLOW}${__file_location}${__BLK}' is not an executable."
 }
 
 function fwktest_assert_string_equals() {
@@ -46,10 +60,22 @@ function fwktest_assert_string_equals() {
     fwktest_eval "${__str1}" = "${__str2}" || fwktest_print fail "Failed to assert that string '${__YELLOW}${__str1}${__BLK}' equals '${__YELLOW}${__str2}${__BLK}'."
 }
 
+function fwktest_assert_not_string_equals() {
+    local __str1="${1}"
+    local __str2="${2}"
+    fwktest_eval "${__str1}" != "${__str2}" || fwktest_print fail "Failed to assert that string '${__YELLOW}${__str1}${__BLK}' not equals '${__YELLOW}${__str2}${__BLK}'."
+}
+
 function fwktest_assert_digit_equals() {
     local __int1="${1}"
     local __int2="${2}"
     fwktest_eval "${__int1}" = "${__int2}" || fwktest_print fail "Failed to assert that integer '${__YELLOW}${__int1}${__BLK}' equals '${__YELLOW}${__int2}${__BLK}'."
+}
+
+function fwktest_assert_not_digit_equals() {
+    local __int1="${1}"
+    local __int2="${2}"
+    fwktest_eval "${__int1}" != "${__int2}" || fwktest_print fail "Failed to assert that integer '${__YELLOW}${__int1}${__BLK}' not equals '${__YELLOW}${__int2}${__BLK}'."
 }
 
 function fwktest_assert_digit_less_than() {
@@ -70,8 +96,20 @@ function fwktest_assert_file_content_same_as() {
     fwktest_eval --eval "cmp" "${__filepath1}" "${__filepath2}" || fwktest_print fail "Failed to assert that file '${__YELLOW}${__filepath1}${__BLK}' content is same as '${__YELLOW}${__filepath2}${__BLK}'."
 }
 
+function fwktest_assert_not_file_content_same_as() {
+    local __filepath1="${1}"
+    local __filepath2="${2}"
+    fwktest_eval --eval "(cmp "${__filepath1}" "${__filepath2}" && return 1 || return 0)" || fwktest_print fail "Failed to assert that file '${__YELLOW}${__filepath1}${__BLK}' content is not same as '${__YELLOW}${__filepath2}${__BLK}'."
+}
+
 function fwktest_assert_exit_code_equals() {
     local __int1="${1}"
     local __int2="${2}"
     fwktest_eval "${__int1}" = "${__int2}" || fwktest_print fail "Failed to assert that exit code '${__YELLOW}${__int1}${__BLK}' equals '${__YELLOW}${__int2}${__BLK}'."
+}
+
+function fwktest_assert_not_exit_code_equals() {
+    local __int1="${1}"
+    local __int2="${2}"
+    fwktest_eval "${__int1}" != "${__int2}" || fwktest_print fail "Failed to assert that exit code '${__YELLOW}${__int1}${__BLK}' not equals '${__YELLOW}${__int2}${__BLK}'."
 }
