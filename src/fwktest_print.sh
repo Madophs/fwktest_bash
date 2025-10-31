@@ -30,7 +30,7 @@ function fwktest_print() {
             printf "${__BLUE}[${__RED}TESTS NOT PASSED${__BLUE}]${__BLK} ${__GREEN}PASSED:${__BLK} %b ${__RED}FAILED:${__BLK} %b ${__YELLOW}TOTAL:${__BLK} %b\n" "${arg1}" "${arg2}" "${arg3}" >&2
         ;;
         TESTS_PASSED)
-            printf "${__BLUE}[${__GREEN}ALL TEST PASSED${__BLUE}]${__BLK}\n" >&2
+            printf "${__BLUE}[${__GREEN}ALL TESTS PASSED${__BLUE}]${__BLK}\n" >&2
         ;;
         STATUS)
             printf "${__BLUE}[${__CYAN}STATUS${__BLUE}]${__BLK} %b ${__BLUE}(${__YELLOW}%b${__BLUE})${__BLK}\n\n" "${arg1}" "${arg2}" >&2
