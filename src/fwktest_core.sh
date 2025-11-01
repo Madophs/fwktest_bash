@@ -18,6 +18,8 @@ function fwktest_add_test_dir() {
 }
 
 function fwktest_evaluate() {
+    local -i __time_start=$(( $(date +%s%N) / 1000000 )) # Start time in nanoseconds
+
     declare -a __test_files=()
     for __path in ${__test_dirs[@]}
     do
@@ -78,11 +80,15 @@ function fwktest_evaluate() {
         popd &> /dev/null
     done
 
+    local -i __time_end=$(( $(date +%s%N) / 1000000 ))
+    local __total_spend_time=$( echo "(${__time_end} - ${__time_start}) / 1000" | bc -l )
+    printf -v __total_spend_time "%.3f\n" ${__total_spend_time}
+
     if (( __counter_failed_assertions == 0 ))
     then
-        fwktest_print tests_passed
+        fwktest_print tests_passed ${__total_spend_time}
     else
         local -i __counter_passed_assertions=$(( __counter_total_assertions - __counter_failed_assertions ))
-        fwktest_print tests_failed ${__counter_passed_assertions} ${__counter_failed_assertions} ${__counter_total_assertions}
+        fwktest_print tests_failed ${__counter_passed_assertions} ${__counter_failed_assertions} ${__counter_total_assertions} ${__total_spend_time}
     fi
 }
