@@ -24,10 +24,10 @@ function fwktest_print() {
             printf "${__BLUE}[${__GREEN}PASSED${__BLUE}]${__BLK} ${__PURPLE}%b${__BLK} ${__BLUE}(${__YELLOW}%b${__BLUE})${__BLK}\n" "${1}" "${2}" >&2
         ;;
         TESTS_FAILED)
-            printf "${__BLUE}[${__RED}TESTS NOT PASSED${__BLUE}]${__BLK} ${__GREEN}PASSED:${__BLK} %b ${__RED}FAILED:${__BLK} %b ${__YELLOW}TOTAL:${__BLK} %b ${__BLUE}Time: ${__BLK}%.3f seconds\n" "${1}" "${2}" "${3}" ${4} >&2
+            printf "${__BLUE}[${__RED}TESTS NOT PASSED${__BLUE}]${__BLK} ${__GREEN}PASSED:${__BLK} %b ${__RED}FAILED:${__BLK} %b ${__YELLOW}TOTAL:${__BLK} %b ${__CYAN}Time: ${__BLK}%.3f seconds\n" "${1}" "${2}" "${3}" ${4} >&2
         ;;
         TESTS_PASSED)
-            printf "${__BLUE}[${__GREEN}ALL TESTS PASSED${__BLUE}]${__BLK} ${__BLUE}Time: ${__BLK}%.3f seconds\n" ${1} >&2
+            printf "${__BLUE}[${__GREEN}ALL TESTS PASSED${__BLUE}]${__BLK} ${__CYAN}Time: ${__BLK}%.3f seconds\n" ${1} >&2
         ;;
         STATUS)
             printf "${__BLUE}[${__CYAN}STATUS${__BLUE}]${__BLK} %b ${__BLUE}(${__YELLOW}%b${__BLUE})${__BLK}\n\n" "${1}" "${2}" >&2
