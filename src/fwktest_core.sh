@@ -87,7 +87,7 @@ function fwktest_evaluate() {
 
     if (( __counter_failed_assertions == 0 ))
     then
-        fwktest_print tests_passed ${__total_spend_time}
+        fwktest_print tests_passed "${__counter_total_assertions}" ${__total_spend_time}
     else
         local -i __counter_passed_assertions=$(( __counter_total_assertions - __counter_failed_assertions ))
         fwktest_print tests_failed ${__counter_passed_assertions} ${__counter_failed_assertions} ${__counter_total_assertions} ${__total_spend_time}
