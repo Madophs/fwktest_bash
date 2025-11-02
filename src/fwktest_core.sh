@@ -18,12 +18,13 @@ function fwktest_add_test_dir() {
 }
 
 function fwktest_evaluate() {
+    local __test_filename=${1:-"test_"} # If no null, test only this file
     local -i __time_start=$(( $(date +%s%N) / 1000000 )) # Start time in nanoseconds
 
     declare -a __test_files=()
     for __path in ${__test_dirs[@]}
     do
-        __test_files+=($(find "${__path}" -name "test_*.sh"))
+        __test_files+=($(find "${__path}" -name "${__test_filename}*"))
     done
 
     if [[ ${#__test_files[@]} -eq 0 ]]
