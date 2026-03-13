@@ -22,7 +22,7 @@ function fwktest_evaluate() {
     local -i __time_start=$(( $(date +%s%N) / 1000000 )) # Start time in nanoseconds
 
     declare -a __test_files=()
-    for __path in ${__test_dirs[@]}
+    for __path in "${__test_dirs[@]}"
     do
         __test_files+=($(find "${__path}" -name "${__test_filename}*"))
     done

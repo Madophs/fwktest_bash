@@ -113,3 +113,17 @@ function fwktest_assert_not_exit_code_equals() {
     local __int2="${2}"
     fwktest_eval "${__int1}" != "${__int2}" || fwktest_print fail "Failed to assert that exit code '${__YELLOW}${__int1}${__BLK}' not equals '${__YELLOW}${__int2}${__BLK}'."
 }
+
+function fwktest_assert_array_contains() {
+    local -n __arr=${1}
+    local __val=${2}
+    fwktest_eval --eval 'printf "%s\n" "${__arr[@]}" | grep -w -F "${__val}"' \
+        || fwktest_print fail "Failed to assert that array '${__YELLOW}${!__arr}${__BLK}' contains '${__YELLOW}${__val}${__BLK}'."
+}
+
+function fwktest_assert_not_array_contains() {
+    local -n __arr=${1}
+    local __val=${2}
+    fwktest_eval --eval 'printf "%s\n" "${__arr[@]}" | grep -v -w -F "${__val}"' \
+        || fwktest_print fail "Failed to assert that array '${__YELLOW}${!__arr}${__BLK}' not contains '${__YELLOW}${__val}${__BLK}'."
+}
