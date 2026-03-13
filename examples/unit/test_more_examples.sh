@@ -29,8 +29,9 @@ function test_try_execute_non_existing_file() {
 }
 
 function test_array_contains_a_value() {
-    local -a some_arr=('hola' 'çomo esta ñoño' 'some\ dir' '/path/to/file')
+    local -a some_arr=('hola' 'çomo esta ñoño' 'some\ dir' '/path/to/file' '--branch' 'status')
     fwktest_assert_array_contains some_arr 'some\ dir'
     fwktest_assert_array_contains some_arr 'çomo esta ñoño'
+    fwktest_assert_array_contains some_arr '--branch'
     fwktest_assert_not_array_contains some_arr 'çomo esta ñono'
 }
