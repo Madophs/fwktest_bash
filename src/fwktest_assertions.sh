@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source "${FWKTEST_SRC}/fwktest_print.sh"
-
 [ ! -v __counter_total_assertions ] && declare -g -i __counter_total_assertions=0
 [ ! -v __counter_failed_assertions ] && declare -g -i __counter_failed_assertions=0
 
@@ -12,12 +10,14 @@ function fwktest_eval() {
     if [[ "${1}" == "--eval" ]]
     then
         shift
-        eval "${@}" &> /dev/null # We don't want to show any output
+        eval "${*}" &> /dev/null # We don't want to show any output
     else
         test "${@}"
     fi
 
-    if [ ! $? -eq 0 ]
+    # this is our preferred way to handle exit status
+    # shellcheck disable=SC2181
+    if (( $? != 0 ))
     then
         __counter_failed_assertions+=1
         return 1
@@ -99,7 +99,7 @@ function fwktest_assert_file_content_same_as() {
 function fwktest_assert_not_file_content_same_as() {
     local __filepath1="${1}"
     local __filepath2="${2}"
-    fwktest_eval --eval "(cmp "${__filepath1}" "${__filepath2}" && return 1 || return 0)" || fwktest_print fail "Failed to assert that file '${__YELLOW}${__filepath1}${__BLK}' content is not same as '${__YELLOW}${__filepath2}${__BLK}'."
+    fwktest_eval --eval '(cmp "${__filepath1}" "${__filepath2}" && return 1 || return 0)' || fwktest_print fail "Failed to assert that file '${__YELLOW}${__filepath1}${__BLK}' content is not same as '${__YELLOW}${__filepath2}${__BLK}'."
 }
 
 function fwktest_assert_exit_code_equals() {
