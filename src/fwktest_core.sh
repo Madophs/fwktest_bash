@@ -25,8 +25,7 @@ function fwktest_evaluate() {
 
     if (( ${#__test_files[@]} == 0 ))
     then
-        printf "Error: no tests found.\n"
-        exit 1
+        fwktest_print error "No test found."
     fi
 
     local __test_file __filename __test_dir
