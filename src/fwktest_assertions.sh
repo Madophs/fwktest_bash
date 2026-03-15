@@ -1,12 +1,12 @@
 #!/bin/bash
 
-[ ! -v __counter_total_assertions ] && declare -g -i __counter_total_assertions=0
-[ ! -v __counter_failed_assertions ] && declare -g -i __counter_failed_assertions=0
+[ ! -v __total_asserts_count ] && declare -g -i __total_asserts_count=0
+[ ! -v __total_fails_count ] && declare -g -i __total_fails_count=0
 
 # @brief evaluate test expression
 # @args --eval = evaluate passed expression literally, otherwise uses conventional "test" command
 function fwktest_eval() {
-    __counter_total_assertions+=1
+    __total_asserts_count+=1
     if [[ "${1}" == "--eval" ]]
     then
         shift
@@ -19,7 +19,7 @@ function fwktest_eval() {
     # shellcheck disable=SC2181
     if (( $? != 0 ))
     then
-        __counter_failed_assertions+=1
+        __total_fails_count+=1
         return 1
     fi
 }

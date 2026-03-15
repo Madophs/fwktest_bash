@@ -18,7 +18,7 @@ function fwktest_add_test_dir() {
 
 function fwktest_evaluate() {
     local __test_filename=${1:-"test_"} # If no null, test only this file
-    local -i __time_start=${EPOCHREALTIME/./} # Start time in microseconds
+    local -i __start_time=${EPOCHREALTIME/./} # Start time in microseconds
 
     local -a __test_files=()
     mapfile -t __test_files < <(printf "%s\n" "${__test_dirs[@]}" | xargs -I {} find "{}" -type f -name "${__test_filename}*")
@@ -54,45 +54,45 @@ function fwktest_evaluate() {
 
         # counters declared on fwktest_assertions
         # shellcheck disable=SC2154
-        local -i __filetest_failed_assertions_before_call=${__counter_failed_assertions} \
-                 __filetest_total_assertions_before_call=${__counter_total_assertions}
-        for __function in "${__test_funcs[@]}"
+        local -i __pre_exec_file_test_asserts=${__total_asserts_count} \
+                 __pre_exec_file_test_fails=${__total_fails_count}
+        for __fwktest_func in "${__test_funcs[@]}"
         do
-            local -i __function_failed_assertions_before_call=${__counter_failed_assertions}
-            local -i __function_total_assertions_before_call=${__counter_total_assertions}
+            local -i __pre_call_asserts=${__total_asserts_count}
+            local -i __pre_call_failed_asserts=${__total_fails_count}
 
             # Calling the function
-            ${__function}
+            ${__fwktest_func}
 
-            local -i __function_total_assertions=$(( __counter_total_assertions - __function_total_assertions_before_call ))
-            local -i __function_total_fails=$(( __counter_failed_assertions - __function_failed_assertions_before_call ))
-            local -i __function_total_pass=$(( __function_total_assertions - __function_total_fails ))
+            local -i __func_asserts=$(( __total_asserts_count - __pre_call_asserts ))
+            local -i __func_fails=$(( __total_fails_count - __pre_call_failed_asserts ))
+            local -i __func_passes=$(( __func_asserts - __func_fails ))
 
-            if (( __function_total_fails != 0 ))
+            if (( __func_fails != 0 ))
             then
-                fwktest_print failed "${__function}" "${__function_total_pass}/${__function_total_assertions}"
+                fwktest_print failed "${__fwktest_func}" "${__func_passes}/${__func_asserts}"
             else
-                fwktest_print pass "${__function}" "${__function_total_pass}/${__function_total_assertions}"
+                fwktest_print pass "${__fwktest_func}" "${__func_passes}/${__func_asserts}"
             fi
         done
 
-        local -i __filetest_total_assertions=$(( __counter_total_assertions - __filetest_total_assertions_before_call ))
-        local -i __filetest_total_fails=$(( __counter_failed_assertions - __filetest_failed_assertions_before_call ))
-        local -i __filetest_total_pass=$(( __filetest_total_assertions - __filetest_total_fails ))
+        local -i __test_file_asserts=$(( __total_asserts_count - __pre_exec_file_test_asserts ))
+        local -i __test_file_fails=$(( __total_fails_count - __pre_exec_file_test_fails ))
+        local -i __test_file_passes=$(( __test_file_asserts - __test_file_fails ))
 
-        fwktest_print status "${__filename}" "${__filetest_total_pass}/${__filetest_total_assertions}"
+        fwktest_print status "${__filename}" "${__test_file_passes}/${__test_file_asserts}"
         popd &> /dev/null
     done
 
-    local -i __time_end=${EPOCHREALTIME/./}
-    local __total_spend_time=""
-    printf -v __total_spend_time "%.6f" "$( echo "(${__time_end} - ${__time_start}) / 1000000" | bc -l )"
+    local -i __end_time=${EPOCHREALTIME/./}
+    local __time_spent=""
+    printf -v __time_spent "%.6f" "$( echo "(${__end_time} - ${__start_time}) / 1000000" | bc -l )"
 
-    if (( __counter_failed_assertions == 0 ))
+    if (( __total_fails_count == 0 ))
     then
-        fwktest_print tests_passed "${__counter_total_assertions}" "${__total_spend_time}"
+        fwktest_print tests_passed "${__total_asserts_count}" "${__time_spent}"
     else
-        local -i __counter_passed_assertions=$(( __counter_total_assertions - __counter_failed_assertions ))
-        fwktest_print tests_failed "${__counter_passed_assertions}" "${__counter_failed_assertions}" "${__counter_total_assertions}" "${__total_spend_time}"
+        local -i __passed_asserts_count=$(( __total_asserts_count - __total_fails_count ))
+        fwktest_print tests_failed "${__passed_asserts_count}" "${__total_fails_count}" "${__total_asserts_count}" "${__time_spent}"
     fi
 }
