@@ -18,7 +18,7 @@ function fwktest_add_test_dir() {
 
 function fwktest_evaluate() {
     local __test_filename=${1:-"test_"} # If no null, test only this file
-    local -i __time_start=$(( $(date +%s%N) / 1000000 )) # Start time in nanoseconds
+    local -i __time_start=${EPOCHREALTIME/./} # Start time in microseconds
 
     local -a __test_files=()
     mapfile -t __test_files < <(printf "%s\n" "${__test_dirs[@]}" | xargs -I {} find "{}" -type f -name "${__test_filename}*")
@@ -84,9 +84,9 @@ function fwktest_evaluate() {
         popd &> /dev/null
     done
 
-    local -i __time_end=$(( $(date +%s%N) / 1000000 ))
+    local -i __time_end=${EPOCHREALTIME/./}
     local __total_spend_time=""
-    printf -v __total_spend_time "%.3f" "$( echo "(${__time_end} - ${__time_start}) / 1000" | bc -l )"
+    printf -v __total_spend_time "%.6f" "$( echo "(${__time_end} - ${__time_start}) / 1000000" | bc -l )"
 
     if (( __counter_failed_assertions == 0 ))
     then
