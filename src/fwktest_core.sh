@@ -18,7 +18,6 @@ function fwktest_add_test_dir() {
 
 function fwktest_evaluate() {
     local __test_filename=${1:-"test_"} # If no null, test only this file
-    local -i __start_time=${EPOCHREALTIME/./} # Start time in microseconds
 
     local -a __test_files=()
     mapfile -t __test_files < <(printf "%s\n" "${__test_dirs[@]}" | xargs -I {} find "{}" -type f -name "${__test_filename}*")
@@ -28,6 +27,7 @@ function fwktest_evaluate() {
         fwktest_print error "No test found."
     fi
 
+    local -i __time_spent=0
     local __test_file __filename __test_dir
     for (( __index=0; __index<${#__test_files[@]}; __index+=1 ))
     do
@@ -52,17 +52,25 @@ function fwktest_evaluate() {
         # Source functions
         source "./${__filename}"
 
+        local -i __pre_exec_test_file_time=__time_spent
         # counters declared on fwktest_assertions
         # shellcheck disable=SC2154
-        local -i __pre_exec_file_test_asserts=${__total_asserts_count} \
-                 __pre_exec_file_test_fails=${__total_fails_count}
+        local -i __pre_exec_test_file_asserts=${__total_asserts_count} \
+                 __pre_exec_test_file_fails=${__total_fails_count}
         for __fwktest_func in "${__test_funcs[@]}"
         do
             local -i __pre_call_asserts=${__total_asserts_count}
             local -i __pre_call_failed_asserts=${__total_fails_count}
+            local -i __pre_call_time=${EPOCHREALTIME/./}
 
             # Calling the function
             ${__fwktest_func}
+
+            local -i __post_call_time=${EPOCHREALTIME/./}
+            local -i __exec_time=$(( __post_call_time - __pre_call_time ))
+            __time_spent+=__exec_time
+            local __exec_time_float
+            printf -v __exec_time_float "%.6f" "$( echo "${__exec_time} / 1000000" | bc -l )"
 
             local -i __func_asserts=$(( __total_asserts_count - __pre_call_asserts ))
             local -i __func_fails=$(( __total_fails_count - __pre_call_failed_asserts ))
@@ -70,29 +78,31 @@ function fwktest_evaluate() {
 
             if (( __func_fails != 0 ))
             then
-                fwktest_print failed "${__fwktest_func}" "${__func_passes}/${__func_asserts}"
+                fwktest_print failed "${__fwktest_func}" "${__func_passes}/${__func_asserts}" "${__exec_time_float}"
             else
-                fwktest_print pass "${__fwktest_func}" "${__func_passes}/${__func_asserts}"
+                fwktest_print pass "${__fwktest_func}" "${__func_passes}/${__func_asserts}" "${__exec_time_float}"
             fi
         done
 
-        local -i __test_file_asserts=$(( __total_asserts_count - __pre_exec_file_test_asserts ))
-        local -i __test_file_fails=$(( __total_fails_count - __pre_exec_file_test_fails ))
+        local __test_file_time_spent_float
+        printf -v __test_file_time_spent_float "%.6f" "$( echo "(${__time_spent} - ${__pre_exec_test_file_time}) / 1000000" | bc -l )"
+
+        local -i __test_file_asserts=$(( __total_asserts_count - __pre_exec_test_file_asserts ))
+        local -i __test_file_fails=$(( __total_fails_count - __pre_exec_test_file_fails ))
         local -i __test_file_passes=$(( __test_file_asserts - __test_file_fails ))
 
-        fwktest_print status "${__filename}" "${__test_file_passes}/${__test_file_asserts}"
+        fwktest_print status "${__filename}" "${__test_file_passes}/${__test_file_asserts}" "${__test_file_time_spent_float}"
         popd &> /dev/null
     done
 
-    local -i __end_time=${EPOCHREALTIME/./}
-    local __time_spent=""
-    printf -v __time_spent "%.6f" "$( echo "(${__end_time} - ${__start_time}) / 1000000" | bc -l )"
+    local __time_spent_float
+    printf -v __time_spent_float "%.6f" "$( echo "${__time_spent} / 1000000" | bc -l )"
 
     if (( __total_fails_count == 0 ))
     then
-        fwktest_print tests_passed "${__total_asserts_count}" "${__time_spent}"
+        fwktest_print tests_passed "${__total_asserts_count}" "${__time_spent_float}"
     else
         local -i __passed_asserts_count=$(( __total_asserts_count - __total_fails_count ))
-        fwktest_print tests_failed "${__passed_asserts_count}" "${__total_fails_count}" "${__total_asserts_count}" "${__time_spent}"
+        fwktest_print tests_failed "${__passed_asserts_count}" "${__total_fails_count}" "${__total_asserts_count}" "${__time_spent_float}"
     fi
 }
