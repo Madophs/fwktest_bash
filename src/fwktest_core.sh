@@ -9,8 +9,7 @@ function fwktest_add_test_dir() {
     do
         if [[ ! -d "${__dir}" ]]
         then
-            printf "Error: <%s> is not a directory\n" "${__dir}"
-            exit 1
+            fwktest_print error "«${__dir}» is not a directory."
         else
             __test_dirs+=("${__dir}")
         fi
@@ -21,39 +20,44 @@ function fwktest_evaluate() {
     local __test_filename=${1:-"test_"} # If no null, test only this file
     local -i __time_start=$(( $(date +%s%N) / 1000000 )) # Start time in nanoseconds
 
-    declare -a __test_files=()
-    for __path in "${__test_dirs[@]}"
-    do
-        __test_files+=($(find "${__path}" -name "${__test_filename}*"))
-    done
+    local -a __test_files=()
+    mapfile -t __test_files < <(printf "%s\n" "${__test_dirs[@]}" | xargs -I {} find "{}" -type f -name "${__test_filename}*")
 
-    if [[ ${#__test_files[@]} -eq 0 ]]
+    if (( ${#__test_files[@]} == 0 ))
     then
         printf "Error: no tests found.\n"
         exit 1
     fi
 
+    local __test_file __filename __test_dir
     for (( __index=0; __index<${#__test_files[@]}; __index+=1 ))
     do
-        local __test_file="${__test_files[${__index}]}"
-        local __filename="$(echo "${__test_file}" | awk -F '/' '{print $NF}')"
-        local __test_dir="$(echo "${__test_file}" | grep -o '.*/')"
+        __test_file="${__test_files[${__index}]}"
+        __filename="$(echo "${__test_file}" | awk -F '/' '{print $NF}')"
+        __test_dir="$(echo "${__test_file}" | grep -o '.*/')"
 
         # Grep all test functions
-        local -a __test_func=($(grep -o -E 'test_[a-zA-Z_]+\(\)' "${__test_file}" | sed 's/()//g'))
-        if [[ ${#__test_func} -eq 0 ]]
+        local -a __test_funcs=()
+        mapfile -t __test_funcs < <(grep -o -E 'test_[a-zA-Z_]+\(\)' "${__test_file}" | sed 's/()//g')
+        if [[ ${#__test_funcs} -eq 0 ]]
         then
             echo "No tests found for <${__test_file}>"
             continue
         fi
 
         printf "Test #%d\nFile : %s\n" ${__index} "${__filename}"
-        # Execute test functions
+
+        # Move to test directory to avoid relative paths sourcing errors
         pushd "${__test_dir}" &> /dev/null
+
+        # Source functions
         source "./${__filename}"
-        local -i __filetest_failed_assertions_before_call=${__counter_failed_assertions}
-        local -i __filetest_total_assertions_before_call=${__counter_total_assertions}
-        for __function in "${__test_func[@]}"
+
+        # counters declared on fwktest_assertions
+        # shellcheck disable=SC2154
+        local -i __filetest_failed_assertions_before_call=${__counter_failed_assertions} \
+                 __filetest_total_assertions_before_call=${__counter_total_assertions}
+        for __function in "${__test_funcs[@]}"
         do
             local -i __function_failed_assertions_before_call=${__counter_failed_assertions}
             local -i __function_total_assertions_before_call=${__counter_total_assertions}
@@ -82,14 +86,14 @@ function fwktest_evaluate() {
     done
 
     local -i __time_end=$(( $(date +%s%N) / 1000000 ))
-    local __total_spend_time=$( echo "(${__time_end} - ${__time_start}) / 1000" | bc -l )
-    printf -v __total_spend_time "%.3f\n" ${__total_spend_time}
+    local __total_spend_time=""
+    printf -v __total_spend_time "%.3f" "$( echo "(${__time_end} - ${__time_start}) / 1000" | bc -l )"
 
     if (( __counter_failed_assertions == 0 ))
     then
-        fwktest_print tests_passed "${__counter_total_assertions}" ${__total_spend_time}
+        fwktest_print tests_passed "${__counter_total_assertions}" "${__total_spend_time}"
     else
         local -i __counter_passed_assertions=$(( __counter_total_assertions - __counter_failed_assertions ))
-        fwktest_print tests_failed ${__counter_passed_assertions} ${__counter_failed_assertions} ${__counter_total_assertions} ${__total_spend_time}
+        fwktest_print tests_failed "${__counter_passed_assertions}" "${__counter_failed_assertions}" "${__counter_total_assertions}" "${__total_spend_time}"
     fi
 }
