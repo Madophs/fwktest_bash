@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if (( BASH_VERSINFO[0] < 5 ))
+then
+    fwktest_print error "fwktest requires Bash 5+"
+fi
+
 [ ! -v __test_dirs ] && declare -a __test_dirs=()
 
 # @brief adds directory containings the tests
