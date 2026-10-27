@@ -24,7 +24,7 @@ function fwktest_add_test_dir() {
 function fwktest_evaluate() {
     (( ${#__test_dirs[@]} < 1 )) && fwktest_print error "No testing directories."
 
-    local __test_filename=${1:-"test_"} # If no null, test only this file
+    local __test_filename=${1:-"test"} # If no null, test only this file
     local -a __test_files=()
     mapfile -t __test_files < <(printf "%s\n" "${__test_dirs[@]}" | xargs -d '\n' -I {} find "{}" -type f -name "${__test_filename}*")
 
