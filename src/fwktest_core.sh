@@ -37,8 +37,8 @@ function fwktest_evaluate() {
     for (( __index=0; __index<${#__test_files[@]}; __index+=1 ))
     do
         __test_file="${__test_files[${__index}]}"
-        __filename="$(echo "${__test_file}" | awk -F '/' '{print $NF}')"
-        __test_dir="$(echo "${__test_file}" | grep -o '.*/')"
+        __filename=$(basename "${__test_file}")
+        __test_dir=$(dirname "${__test_file}")
 
         # Grep all test functions
         local -a __test_funcs=()
