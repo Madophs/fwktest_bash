@@ -69,13 +69,13 @@ function fwktest_assert_not_string_equals() {
 function fwktest_assert_digit_equals() {
     local __int1="${1}"
     local __int2="${2}"
-    fwktest_eval "${__int1}" = "${__int2}" || fwktest_print fail "Failed to assert that integer '${__YELLOW}${__int1}${__BLK}' equals '${__YELLOW}${__int2}${__BLK}'."
+    fwktest_eval "${__int1}" -eq "${__int2}" || fwktest_print fail "Failed to assert that integer '${__YELLOW}${__int1}${__BLK}' equals '${__YELLOW}${__int2}${__BLK}'."
 }
 
 function fwktest_assert_not_digit_equals() {
     local __int1="${1}"
     local __int2="${2}"
-    fwktest_eval "${__int1}" != "${__int2}" || fwktest_print fail "Failed to assert that integer '${__YELLOW}${__int1}${__BLK}' not equals '${__YELLOW}${__int2}${__BLK}'."
+    fwktest_eval "${__int1}" -ne "${__int2}" || fwktest_print fail "Failed to assert that integer '${__YELLOW}${__int1}${__BLK}' not equals '${__YELLOW}${__int2}${__BLK}'."
 }
 
 function fwktest_assert_digit_less_than() {
