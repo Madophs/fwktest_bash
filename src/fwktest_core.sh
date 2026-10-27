@@ -40,8 +40,9 @@ function fwktest_evaluate() {
 
         # Grep all test functions
         local -a __test_funcs=()
-        mapfile -t __test_funcs < <(grep -o -E 'test_[a-zA-Z_]+\(\)' "${__test_file}" | sed 's/()//g')
-        if [[ ${#__test_funcs} -eq 0 ]]
+        mapfile -t __test_funcs < <(grep -o -E '^(function test_|test_)[a-zA-Z_0-9]+[[:space:]]*\(\)' "${__test_file}" |
+                                    sed -e 's/()//g' -e 's/^function *//g')
+        if (( ${#__test_funcs[@]} <= 0 ))
         then
             echo "No tests found for <${__test_file}>"
             continue

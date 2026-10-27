@@ -35,3 +35,21 @@ function test_array_contains_a_value() {
     fwktest_assert_array_contains some_arr '--branch'
     fwktest_assert_not_array_contains some_arr 'çomo esta ñono'
 }
+
+function test_function_with_numbers_123() {
+    fwktest_assert_string_equals "${FUNCNAME[0]}" "test_function_with_numbers_123"
+}
+
+#function test_commented_function() {
+#    fwktest_assert_string_equals "${FUNCNAME[0]}" "This function should be ignored"
+#}
+
+test_function_without_keyword ()
+{
+    fwktest_assert_string_equals "${FUNCNAME[0]}" "test_function_without_keyword"
+}
+
+function test_function_new_line   ()
+{
+    fwktest_assert_string_equals "${FUNCNAME[0]}" "test_function_new_line"
+}
