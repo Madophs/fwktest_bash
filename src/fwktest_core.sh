@@ -7,7 +7,7 @@ fi
 
 [ ! -v __test_dirs ] && declare -a __test_dirs=()
 
-# @brief adds directory containings the tests
+# @brief adds directory containing the tests
 # reminder test's filenames must start with prefix "test_"
 function fwktest_add_test_dir() {
     for __dir in "${@}"
@@ -22,15 +22,13 @@ function fwktest_add_test_dir() {
 }
 
 function fwktest_evaluate() {
+    (( ${#__test_dirs[@]} < 1 )) && fwktest_print error "No testing directories."
+
     local __test_filename=${1:-"test_"} # If no null, test only this file
-
     local -a __test_files=()
-    mapfile -t __test_files < <(printf "%s\n" "${__test_dirs[@]}" | xargs -I {} find "{}" -type f -name "${__test_filename}*")
+    mapfile -t __test_files < <(printf "%s\n" "${__test_dirs[@]}" | xargs -d '\n' -I {} find "{}" -type f -name "${__test_filename}*")
 
-    if (( ${#__test_files[@]} == 0 ))
-    then
-        fwktest_print error "No test found."
-    fi
+    (( ${#__test_files[@]} == 0 )) && fwktest_print error "No test found."
 
     local -i __time_spent=0
     local __test_file __filename __test_dir
