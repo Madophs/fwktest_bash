@@ -7,7 +7,7 @@ __YELLOW='\e[1;33m'
 __BLUE='\e[1;34m'
 __PURPLE='\e[1;35m'
 __CYAN='\e[1;36m'
-__BLK='\e[0;0m'
+__BLK='\e[0m'
 
 # @brief for internal use only
 function fwktest_print() {
