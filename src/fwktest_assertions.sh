@@ -93,13 +93,13 @@ function fwktest_assert_digit_greater_than() {
 function fwktest_assert_file_content_same_as() {
     local __filepath1="${1}"
     local __filepath2="${2}"
-    fwktest_eval --eval "cmp" "${__filepath1}" "${__filepath2}" || fwktest_print fail "Failed to assert that file '${__YELLOW}${__filepath1}${__BLK}' content is same as '${__YELLOW}${__filepath2}${__BLK}'."
+    fwktest_eval --eval 'cmp "${__filepath1}" "${__filepath2}"' || fwktest_print fail "Failed to assert that file '${__YELLOW}${__filepath1}${__BLK}' content is same as '${__YELLOW}${__filepath2}${__BLK}'."
 }
 
 function fwktest_assert_not_file_content_same_as() {
     local __filepath1="${1}"
     local __filepath2="${2}"
-    fwktest_eval --eval '(cmp "${__filepath1}" "${__filepath2}" && return 1 || return 0)' || fwktest_print fail "Failed to assert that file '${__YELLOW}${__filepath1}${__BLK}' content is not same as '${__YELLOW}${__filepath2}${__BLK}'."
+    fwktest_eval --eval '(cmp "${__filepath1}" "${__filepath2}" && exit 1 || exit 0)' || fwktest_print fail "Failed to assert that file '${__YELLOW}${__filepath1}${__BLK}' content is not same as '${__YELLOW}${__filepath2}${__BLK}'."
 }
 
 function fwktest_assert_exit_code_equals() {
