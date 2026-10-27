@@ -75,7 +75,8 @@ function fwktest_evaluate() {
             local -i __exec_time=$(( __post_call_time - __pre_call_time ))
             __time_spent+=__exec_time
             local __exec_time_float
-            printf -v __exec_time_float "%.6f" "$( echo "${__exec_time} / 1000000" | bc -l )"
+            printf -v __exec_time_float "%d.%6.6s" $((__exec_time / 1000000)) $((__exec_time % 1000000))
+            __exec_time_float=${__exec_time_float// /0}
 
             local -i __func_asserts=$(( __total_asserts_count - __pre_call_asserts ))
             local -i __func_fails=$(( __total_fails_count - __pre_call_failed_asserts ))
@@ -90,7 +91,9 @@ function fwktest_evaluate() {
         done
 
         local __test_file_time_spent_float
-        printf -v __test_file_time_spent_float "%.6f" "$( echo "(${__time_spent} - ${__pre_exec_test_file_time}) / 1000000" | bc -l )"
+        local -i __test_file_time_spent=$(( __time_spent - __pre_exec_test_file_time))
+        printf -v __test_file_time_spent_float "%d.%6.6s" $((__test_file_time_spent / 1000000)) $((__test_file_time_spent % 1000000))
+        __test_file_time_spent_float=${__test_file_time_spent_float// /0}
 
         local -i __test_file_asserts=$(( __total_asserts_count - __pre_exec_test_file_asserts ))
         local -i __test_file_fails=$(( __total_fails_count - __pre_exec_test_file_fails ))
@@ -101,7 +104,8 @@ function fwktest_evaluate() {
     done
 
     local __time_spent_float
-    printf -v __time_spent_float "%.6f" "$( echo "${__time_spent} / 1000000" | bc -l )"
+    printf -v __time_spent_float "%d.%6.6s" $(( __time_spent / 1000000 )) $(( __time_spent % 1000000 ))
+    __time_spent_float=${__time_spent_float// /0}
 
     if (( __total_fails_count == 0 ))
     then
