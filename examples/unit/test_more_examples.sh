@@ -36,6 +36,12 @@ function test_array_contains_a_value() {
     fwktest_assert_not_array_contains some_arr 'çomo esta ñono'
 }
 
+function test_array_not_contains_a_value() {
+    local -a some_arr=(hola como hola "hi /va _89")
+    fwktest_assert_not_array_contains some_arr 'çomo'
+    fwktest_assert_not_array_contains some_arr 'hi'
+}
+
 function test_function_with_numbers_123() {
     fwktest_assert_string_equals "${FUNCNAME[0]}" "test_function_with_numbers_123"
 }
