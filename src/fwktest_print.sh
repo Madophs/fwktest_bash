@@ -26,16 +26,16 @@ function fwktest_print() {
             printf "${__BLUE}[${__RED}FAILED${__BLUE}] ${__PURPLE}%b ${__BLUE}(${__YELLOW}%b${__BLUE}) ${__CYAN}Time: ${__GREEN2}%s${__BLK} seconds.\n" "${1}" "${2}" "${3}">&2
         ;;
         PASS|PASSED)
-            printf "${__BLUE}[${__GREEN}PASSED${__BLUE}] ${__PURPLE}%b ${__BLUE}(${__YELLOW}%b${__BLUE}) ${__CYAN}Time: ${__GREEN2}%s${__BLK} seconds.\n" "${1}" "${2}" "${3}" >&2
+            printf "${__BLUE}[${__GREEN}PASSED${__BLUE}] ${__PURPLE}%b ${__BLUE}(${__YELLOW}%b${__BLUE}) ${__CYAN}Time: ${__GREEN2}%s${__BLK} seconds.\n" "${1}" "${2}" "${3}"
         ;;
         TESTS_FAILED)
             printf "${__BLUE}[${__RED}TESTS NOT PASSED${__BLUE}]${__GREEN} PASSED:${__BLK} %b ${__RED}FAILED:${__BLK} %b ${__YELLOW}TOTAL:${__BLK} %b ${__CYAN}Time: ${__GREEN2}%s${__BLK} seconds\n" "${1}" "${2}" "${3}" "${4}" >&2
         ;;
         TESTS_PASSED)
-            printf "${__BLUE}[${__GREEN}ALL TESTS PASSED${__BLUE}]${__GREEN} PASSED:${__BLK} %b ${__CYAN}Time: ${__GREEN2}%s${__BLK} seconds\n" "${1}" "${2}" >&2
+            printf "${__BLUE}[${__GREEN}ALL TESTS PASSED${__BLUE}]${__GREEN} PASSED:${__BLK} %b ${__CYAN}Time: ${__GREEN2}%s${__BLK} seconds\n" "${1}" "${2}"
         ;;
         STATUS)
-            printf "${__BLUE}[${__CYAN}STATUS${__BLUE}]${__BLK} %b ${__BLUE}(${__YELLOW}%b${__BLUE}) ${__CYAN}Time: ${__GREEN2}%s${__BLK} seconds\n\n" "${1}" "${2}" "${3}" >&2
+            printf "${__BLUE}[${__CYAN}STATUS${__BLUE}]${__BLK} %b ${__BLUE}(${__YELLOW}%b${__BLUE}) ${__CYAN}Time: ${__GREEN2}%s${__BLK} seconds\n\n" "${1}" "${2}" "${3}"
         ;;
     esac
 }
