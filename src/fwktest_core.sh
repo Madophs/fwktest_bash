@@ -47,7 +47,7 @@ function fwktest_evaluate() {
         printf "Test #%d\nFile : %s\n" ${__index} "${__filename}"
 
         # Move to test directory to avoid relative paths sourcing errors
-        pushd "${__test_dir}" &> /dev/null
+        pushd "${__test_dir}" &> /dev/null || fwktest_print error "pushd ${__test_dir}"
 
         # Source functions
         source "./${__filename}"
@@ -92,7 +92,7 @@ function fwktest_evaluate() {
         local -i __test_file_passes=$(( __test_file_asserts - __test_file_fails ))
 
         fwktest_print status "${__filename}" "${__test_file_passes}/${__test_file_asserts}" "${__test_file_time_spent_float}"
-        popd &> /dev/null
+        popd &> /dev/null || fwktest_print error "popd ${__test_dir}"
     done
 
     local __time_spent_float
